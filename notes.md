@@ -1,10 +1,10 @@
-## Lesson 1
+# Lesson 1
 
-### Course Intro
+## Course Intro
 
 The course will cover topics like blockchain theory, Solidity, the Ethereum Virtual Machine, layer 2 solutions, gas optimization, security, and more advanced concepts.
 
-### Eth intro 
+## Eth intro 
 
 - Intro on TLV for each chains.
 
@@ -19,3 +19,275 @@ The course will cover topics like blockchain theory, Solidity, the Ethereum Virt
 - Account abstraction proposals aim to add more functionality like paying fees in other tokens, multi-sig transactions, and social recovery to Ethereum accounts.
 
 - Upcoming concepts like sharding may further improve scalability by distributing data and load across multiple shards (include blob).
+
+# Lesson 2
+
+Solidity Review
+Function Selectors
+Advanced Solidity Types
+
+```solidity
+// define version of the compiler
+pragma solidity ^0.8.0;
+
+// 
+contract ContractExample {
+    uint score = 5;
+}
+```
+
+`uint` defines an unsigned integer of 256 bits by default
+
+![alt text](image.png)
+
+Tips :
+- have a fixed version of the compiler so there is no surprise during the compilation
+- try to restrict access as much as possible
+
+
+![alt text](image-1.png)
+
+## modifier
+
+Definition : A  modifier  is a special function that enables us to change the behaviour of functions in Solidity. (used to automatically check a condition before executing a function)
+
+```solidity
+address owner;
+    
+modifier onlyOwner {
+    if (msg.sender == owner) {
+       _;
+    }
+}
+function setScore(uint new_score) public onlyOwner {
+    score = new_score;
+}
+
+```
+
+## constructor
+
+Definition : constructor is a function that is executed only once
+
+```solidity
+contract Score {
+    address owner;
+    constructor() {
+        owner = msg.sender;
+    }
+}
+// Outside a function
+event myEvent(type1, type2, ... );
+// Inside a function
+emit myEvent(param1, param2, ... );
+
+```
+
+be carefull with upgradable contract because the behavior is not the same anymor
+
+## Events
+
+Def : They are a way to show the
+changes made into a contract
+
+```solidity
+// Outside a function
+event myEvent(type1, type2, ... );
+// Inside a function
+emit myEvent(param1, param2, ... );
+```
+
+- good practice to use a lot of events (so you can monitor it)
+
+## Mappings
+
+```solidity
+mapping(address => uint) score_list;
+function getUserScore(address user) public view returns (uint) {
+    return score_list[user];
+}
+```
+
+ps : we can't loop over a mapping in solidity
+
+## Arrays
+
+Fixed size array :  T[k]
+Dynamic size array :  T[]
+
+```solidity
+uint[] all_possible_number;        
+uint[9] one_digit_number;
+```
+
+## Struct
+
+```solidity
+struct Funder {
+   address addr;
+   uint amount;
+}
+```
+
+## Inheritance
+
+```solidity
+// SPDX-License-Identifier: GPL-3.0
+pragma solidity >=0.7.0 <0.9.0;
+contract Owned {
+   constructor() { owner = msg.sender; }
+   address  owner;
+}
+// Use `is` to derive from another contract. Derived
+// contracts can access all non-private members including
+// internal functions and state variables. These cannot be
+// accessed externally via `this`, though.
+contract Child1 is Owned {
+   // The keyword `virtual` means that the function can change
+   // its behaviour in derived classes ("overriding").
+   function doThings()) virtual public {
+       .... ;
+   }
+}
+```
+
+ps : 
+- if you change the order of the inheritance chain then it change the inheritance
+- don't use
+
+## Enums
+
+`enum ActionChoices { GoLeft, GoRight, GoStraight, SitStill }`
+
+helps make code cleaner
+
+## Storage, memory and calldata
+
+- Storage : costly because has to be cloned by every node in the network
+- Memory : used to store data temporarily whilst executing logic 
+- Calldata : non-modifiable and non-persistent data location
+
+## Constant and Immutable variables
+
+- cannot be modified in both cases
+- For constant variables, the value has to be fixed at **compile-time**, while for immutable, it can still be assigned at **construction** time.
+- immutable are good for security
+
+## Interface 
+
+The interface specifies the function signatures, but the implementation is specified in child contracts
+
+## Fallback and Receive functions
+
+## Dealing with errors
+
+- Example : `require(_amount > 0,"Amount must be > 0");`
+
+
+- security : try to check all inputs to all function (use `require` keyword)
+- **require** : used to be sure that something is true (testcases for security)
+- **Assert** : creates an error of type Panic(uint256). Not used in every day tests, mostly internal use (working code shouldn't throw this kind of error) 
+- **try/catch** : used to catch errors in calls to external contracts
+
+```solidity
+try feed.getData(token) returns (uint v) {
+    return (v, true);
+} catch Error(string memory /*reason*/) {
+    // This is executed in case
+    // revert was called inside getData
+    // and a reason string was provided.
+    errorCount++;
+    return (0, false);
+} catch Panic(uint /*errorCode*/) {
+    // This is executed in case of a panic,
+    // i.e. a serious error like division by zero
+    // or overflow. The error code can be used
+    // to determine the kind of error.
+    errorCount++;
+    return (0, false);
+} catch (bytes memory /*lowLevelData*/) {
+    // This is executed in case revert() was used.
+    errorCount++;
+    return (0, false);
+}
+```
+
+- custom errors : used with the revert statement
+```solidity
+error NotEnoughFunds(uint requested, uint available);
+contract Token {
+   mapping(address => uint) balances;
+   function transfer(address to, uint amount) public {
+       uint balance = balances[msg.sender];
+       if (balance < amount)
+           revert NotEnoughFunds(amount, balance);
+       balances[msg.sender] -= amount;
+       balances[to] += amount;
+       // ...
+   }
+}
+```
+## Compile time
+
+## Using other contract and libraries
+
+**Compile time**
+
+```solidity
+pragma solidity ^0.8.0;
+import "https://github.com/OpenZeppelin/openzeppelin-contracts
+/contracts/utils/math/Math.sol";
+contract Test {
+   using Math for uint256;
+   
+     
+    function bigger(uint256 _a, uint256 _b) public pure returns(uint256)
+{
+        uint256 big = _a.max(_b);
+        return(big);
+   }
+}
+```
+
+## Precompiled contract
+
+Needed because evm is long to process. 
+- drop out the evm 
+- the client process (go code or other instead of solidity so better performance)
+- pass the result back to the evm (like processed by the evm but it's not)
+
+## Delete 
+
+It help save fees
+
+- `delete myVariable;`
+- `myVariable = 0;`
+- ...
+
+## Language Changes (0.8.6)
+
+- **event selector**
+- assembly memeory safe
+- file level library references
+- extend comparaison operators
+- abi.encodeCall (can call another contract)
+- External funciton fields (support .address and .selector)
+- Inheritance changed
+- Enum min/max
+- User defined value type
+- london upgrade fee support
+- support for Paris hard fork
+- deprecation of `selfdescruct`
+- named parameters in mappings 
+- ...
+
+## Function Selectors
+
+## advanced solidity types
+
+we can create custom solidity types (to wrap and convert to another data type for example)
+
+## Function types
+
+- allow to have a function as a variable and pass it to other functions
+
