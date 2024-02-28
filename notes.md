@@ -36,6 +36,11 @@ contract ContractExample {
 }
 ```
 
+## View and pure functions
+
+- View: Functions which do not change any state values
+- Pure: Functions which do not change any state values and also do not read any state values
+
 `uint` defines an unsigned integer of 256 bits by default
 
 ![alt text](image.png)
@@ -291,3 +296,77 @@ we can create custom solidity types (to wrap and convert to another data type fo
 
 - allow to have a function as a variable and pass it to other functions
 
+# Lesson 3
+
+## Eth data structure
+
+- previously Merkle Patricia Tries / Radix Tries
+- now using a verkle tree
+
+![world and account state](image-2.png)
+
+[ethereum-state-trie-architecture-explained](https://medium.com/@eiki1212/ethereum-state-trie-architecture-explained-a30237009d4e)
+
+## Ethereum Block Fields
+
+- deposits
+- gas_limit
+- block_number
+- recipient
+- signature
+- nonce
+- value
+- data
+...
+
+[see doc](https://ethereum.org/en/developers/docs/blocks)
+
+The EVM is a stack machine
+ps : Stack != call stack
+
+
+
+## Data areas
+Data can be stored in
+- Stack
+- Calldata
+- Memory
+- Storage
+- Code
+- Logs
+
+## Data areas - Memory
+
+- it's a byte-array 
+- you have to pay for the number of bytes written
+- if new area of memory = more expensive
+
+Memory expansion costs scale linearly for the first
+724 bytes and quadratically after that".
+If you use <=724 bytes of memory the second part of
+the equation is 0
+
+## Data areas - Storage
+
+- think : fixed size and dynamic sized variables
+
+![alt text](image-4.png)
+
+## Code execution
+
+### Opcodes
+
+def: low-level machine-level instruction that directly corresponds to a specific operation performed by the (EVM)
+
+ps: every solidity get translated into EVM opcodes during compilation
+
+- stack manipulation opcodes : POP, PUSH, DUP, SWAP
+- arithmetic opcodes: ADD, SUB...
+- environmental opcodes : CALLER, CALLVALUE, NUMBER
+- Memory-manipulating ...
+- storage manipulating opcodes
+...
+
+### visualisation
+
+You can use Sol 2 UML to visualize solidity contract in uml
