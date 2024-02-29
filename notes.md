@@ -370,3 +370,85 @@ ps: every solidity get translated into EVM opcodes during compilation
 ### visualisation
 
 You can use Sol 2 UML to visualize solidity contract in uml
+
+# Seance 4
+
+## Upgradability
+
+- be careful because introduce security flaws
+
+// TODO: finish notes
+
+## Diamond pattern 
+
+- is a contract that uses a fallback function to delegate function calls to multiple other contracts called facets
+- used / created by aavegotchi
+- solve some specific pblm (size...)
+
+![alt text](image-5.png)##
+
+## Metamorphic Crontracts
+## CREATE & CREATE2 & selfdestruct
+
+- reduce the address you need to track as long as the bytecode is the same
+- redeploy on top of another contract after selfdestruct (not everybody thinks it's a good idea)
+
+## IDE general techniques from github in Remix
+```solidity
+import "https://github.com/OpenZeppelin/openzeppelin-contracts/contracts/access/Ownable.sol";
+or :
+import "@openzeppelin/contracts@4.2.0/token/ERC20/ERC20.sol";
+````
+
+## Logging in Remix / hardhat
+
+you can now log by importing log from hardhat
+
+## Forking from mainnet
+
+- You can now fork (make a local copy) from maintnet and help for testing.
+- Super cool to interact with aave like if it was on mainnet.
+- need a full node (alchemy or infura...)
+
+## Solidity templates
+
+From hardhat : [Link](https://github.com/PaulRBerg/hardhat-template)
+
+- hardhat: compile, run and test sc
+- typechain: typescript
+- ethers: js
+- solhint: linter
+- solcover: code coverage
+
+Also :
+- Also one from foundry
+- don't forget sol2uml
+
+## Boring code is better code
+
+- Foundry is a tool like hardhat but much faster than hardhat
+- just use foundry, check their [book](https://book.getfoundry.sh/) and enjoy
+
+## Foundry
+
+### Foundry test
+
+it's a test contract with `assert` etc...
+
+### Foundry with hardhat
+
+- foundry can integrates with hardhat dependencies (node_modules)
+- copy one folder + config file etc and you have a working foundry in a hardhat project
+
+### solidity scripting
+
+- a way to deploy with foundry
+
+### Foundry cast
+
+- allow to perform eth RPC from cli
+
+### Cheatcodes
+
+- allow to change the block number
+
