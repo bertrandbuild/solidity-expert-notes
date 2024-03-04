@@ -452,3 +452,76 @@ it's a test contract with `assert` etc...
 
 - allow to change the block number
 
+
+# Seance 5
+
+### Memory
+
+![alt text](image-6.png)
+
+Memory is a byte-array. Memory starts off zero-size, but can be expanded in 32-byte chunks by simply accessing or storing memory at indices greater than its current size.
+
+### Storage 
+
+![alt text](image-7.png)
+
+### Code execution
+
+![alt text](image-8.png)
+
+### OpCodes 
+
+- stack manipulation opcodes (POP, PUSH ...)
+- arithmetic/comparision/bitwise opcdes (ADD, SUB ...)
+...
+
+- [complete list on ethervm](https://www.ethervm.io/) & on [evm.codes](https://www.evm.codes/?fork=shanghai)
+- Can be tried on [evm.codes](https://www.evm.codes/playground?fork=shanghai)
+
+## Assembly
+
+- advantage : it's much more performant.  
+- Problem : it's more time consuming and more prone to errors. 
+
+### Notation
+
+```
+a + b      // Standard Notation (Infix)
+a b add    // Reverse Polish Notation
+mstore(0x80, add(mload(0x80), 2))      //  how we write the code
+2 0x80 mload add 0x80 mstore           //  How it is represented in bytecode
+```
+
+## Assembly example 
+
+check here : https://www.youtube.com/watch?v=RxL_1AfV7N4
+
+## External Calls
+
+![alt text](image-9.png)
+
+## YUL
+
+- with Yul, you don't have to worry about the stack (more dev friendly)
+- statiscally typed
+- good tutorial : [medium of Jean](https://jeancvllr.medium.com/solidity-tutorial-all-about-assembly-5acdfefde05c)
+
+## YUL syntax overview
+- literals
+- calls to builtin functions
+- variable declarations
+- identifiers (variables)
+- assignments 
+- blocks where local var are scoped inside
+- if statement
+- switch
+- for loops
+- function defifitions
+- blocks are delimited by `{}`
+- variable declarations : `let y := 5`
+
+what do the let keyword ?
+- create a new stack slot
+- the new slot is reserved for the variable
+- the slot is then automatically removed again when the end of the block is reached
+
