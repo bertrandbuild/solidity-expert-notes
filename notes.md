@@ -519,6 +519,7 @@ check here : https://www.youtube.com/watch?v=RxL_1AfV7N4
 - function defifitions
 - blocks are delimited by `{}`
 - variable declarations : `let y := 5`
+- ...
 
 what do the let keyword ?
 - create a new stack slot
