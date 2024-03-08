@@ -1,3 +1,5 @@
+// init deployment cost : 2790345
+// actual optimisation : 2784774
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.0; 
 
@@ -19,7 +21,7 @@ abstract contract Context {
     function _msgData() internal view virtual returns (bytes calldata) {
         return msg.data;
     }
-}
+} // ps : I tried to remove but it's not saving gas
 
 /**
  * @dev Contract module which provides a basic access control mechanism, where
@@ -45,7 +47,8 @@ abstract contract Ownable is Context {
      * @dev Initializes the contract setting the deployer as the initial owner.
      */
     constructor() {
-        _transferOwnership(_msgSender());
+        _transferOwnership(msg.sender);
+        // before : 2787621 -> 2787621
     }
 
     /**
@@ -54,7 +57,9 @@ abstract contract Ownable is Context {
     modifier onlyOwner() {
         _checkOwner();
         _;
-    }
+    }// before : 2787621
+    // ps: tried to change the modifier into a function but it cost more gas in fact
+    // ???!!!?? tried also to use the require directly but it cost more gas ???!!!??
 
     /**
      * @dev Returns the address of the current owner.
@@ -67,7 +72,7 @@ abstract contract Ownable is Context {
      * @dev Throws if the sender is not the owner.
      */
     function _checkOwner() internal view virtual {
-        require(owner() == _msgSender(), "Ownable: caller is not the owner");
+        require(_owner == msg.sender, "Ownable: caller is not the owner");
     }
 
     /**
@@ -98,8 +103,13 @@ abstract contract Ownable is Context {
      * Internal function without access restriction.
      */
     function _transferOwnership(address newOwner) internal virtual {
+        // V1
         address oldOwner = _owner;
         _owner = newOwner;
         emit OwnershipTransferred(oldOwner, newOwner);
-    }
+
+        // V2 -> is using more gas but we delete one memory var ??????
+        // emit OwnershipTransferred(_owner, newOwner);
+        // _owner = newOwner;
+    } 
 }
