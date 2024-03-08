@@ -526,3 +526,56 @@ what do the let keyword ?
 - the new slot is reserved for the variable
 - the slot is then automatically removed again when the end of the block is reached
 
+# Lesson 8
+
+- execute cheap fct first
+- SSTORE (writing in storage) is one of the most expensive op, try to
+  - store elsewhere
+  - just store the final result
+- memory is cheaper than storage
+  - but don't copy from memory to storage (introduce security issues)
+  - you can use a storage pointer (but be super careful)
+- the cost memory will up quadratically after the first 724 bytes
+- remove redundant checks
+- free storage slots (=0 to a var) when you don't need it anymore = 15000gas refund
+- some op trigger gas refunds (not considered when running so still need large eth to pay for fees)
+- use bytes32 when possible (cheaper type)
+- use bytes1 - bytes 32 when length is known
+- use bytes instead of byte[]
+- use mapping instead of array (or use array with smaller data types)
+- pack inside `Struct` if smaller than 32 bytes ()
+  - a structure of 2 uint128 can be stored in one slot in a mapping instead of storing them separately
+  - ps : uint128 is not cheaper than uint256 because it's filled with 0
+- when using inheritance, use the variables of the parent
+- sometimes we just need to play with storage vs memory to see what's best
+- try using event instead of storing data
+- avoid public var
+- fixed size memory can be used to save gas
+- name the return value of a function instead of creating a new var
+- calling fct is relatively cheap
+- for public fct, if only called called externally then use "external" so the parameters are not stored into memory but only read from call data directly
+- reduce public variables
+- put called functions earlier
+- [tool to optimize function name](https://emn178.github.io/solidity-optimize-name/)
+- example of packing data into a data field : [solidity gas optimisation example](https://blog.emn178.cc/en/post/solidity-gas-optimization-data-compression/)
+- if a view function is called in a transaction then it causes gas
+- transform modifier into function call can help (only the fct call will be inserted at the start of the fct)
+- don't use storage variables in loops (replace them by local/memory var)
+- break out of loop as soon as possible and get out any not mandatory var
+- avoid unbounded loops
+- use custom errors `error Unauthoeized(); ... revert Unauthorized()` instead of `revert('unauthorized);`
+- formula for LOG gas cost : k + unindexedBytes * a + unindexedTopics * b
+  - where k=375 a=! b=375
+- make sure the optimizer is turned on when compiling code
+- use `require` for all runtime condition validations (that can't be prevalidated on the compile time)
+- keccak256: 30 gas + 6 gas for each word of input data
+- sha256: 60 gas + 12 gas for each word of input data
+- ripemd160: 600 gas + 120 gas for each word of data
+- use keccak256 when possible
+- web3.eth.estimateGas() can estimate gas
+- sol2uml provides visualisation of storage + UML
+- solidity has 2 optimiser modules
+  - opcode lvl
+  - YUL ir code lvl
+- conserve memory and storage by writing new values over unused old ones (no garbage collector in solidity)
+- inspect solidity compiler Yul Output to see what is solidity doing
