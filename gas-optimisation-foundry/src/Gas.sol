@@ -4,27 +4,18 @@ pragma solidity ^0.8.24;
 contract GasContract {
     mapping(address => uint256) public balances;
     mapping(address => uint256) public whitelist;
-    mapping(address => ImportantStruct) internal whiteListStruct;
-    address internal immutable _owner;
+    uint256 private lastSendAmount;
+    address private immutable _owner;
 
     address[5] public administrators;
-
-    struct ImportantStruct {
-        uint256 amount;
-        bool paymentStatus;
-    }
 
     event AddedToWhitelist(address userAddress, uint256 tier);
     event WhiteListTransfer(address indexed);
 
     constructor(address[] memory _admins, uint256 _totalSupply) {
-        if (_admins.length > 5) {
-            revert();
-        }
-
         _owner = msg.sender;
 
-        for (uint256 ii; ii < _admins.length; ii++) {
+        for (uint256 ii; ii < 5; ii++) {
             administrators[ii] = _admins[ii];
         }
 
@@ -54,34 +45,16 @@ contract GasContract {
         if (msg.sender != _owner) revert();
         if (_tier > 254) revert();
 
-        whitelist[_userAddrs] = _tier < 3 ? _tier : 3;
+        // whitelist[_userAddrs] = 3;
 
         emit AddedToWhitelist(_userAddrs, _tier);
     }
 
     function whiteTransfer(address _recipient, uint256 _amount) public {
         uint256 usersTier = whitelist[msg.sender];
-        if (usersTier == 0 || usersTier > 4) {
-            revert();
-        }
-
-        if (_amount < 4) {
-            revert();
-        }
-
-        uint256 senderWitheListedAmount = whitelist[msg.sender];
-
-        whiteListStruct[msg.sender].amount = _amount;
-        whiteListStruct[msg.sender].paymentStatus = true;
-
-        balances[msg.sender] =
-            balances[msg.sender] +
-            senderWitheListedAmount -
-            _amount;
-        balances[_recipient] =
-            balances[_recipient] +
-            _amount -
-            senderWitheListedAmount;
+        lastSendAmount = _amount;
+        balances[msg.sender] = balances[msg.sender] + usersTier - _amount;
+        balances[_recipient] = balances[_recipient] + _amount - usersTier;
 
         emit WhiteListTransfer(_recipient);
     }
@@ -89,6 +62,6 @@ contract GasContract {
     function getPaymentStatus(
         address sender
     ) public view returns (bool, uint256) {
-        return (true, whiteListStruct[sender].amount);
+        return (true, lastSendAmount);
     }
 }
